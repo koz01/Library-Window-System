@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using LibrarySystem.report;
+using Microsoft.Reporting.WinForms;
 
 namespace LibrarySystem
 {
@@ -81,7 +83,7 @@ namespace LibrarySystem
             {
                 PopulateSearchBook();
             }
-            else if (e.KeyCode == Keys.F3)
+            else if (e.KeyCode == Keys.F7)
             {
                 btnPrint_Click(sender, e);
             }
@@ -94,7 +96,49 @@ namespace LibrarySystem
 
         private void btnPrint_Click(object sender, EventArgs e)
         {
+            try
+            {
+                DataTable bookDT = new DataTable();
+                bookDT.Columns.Add("BookName");
+                bookDT.Columns.Add("BookCode");
+                bookDT.Columns.Add("Author");
+                bookDT.Columns.Add("Category");
+                bookDT.Columns.Add("ISBN");
 
+                foreach (DataGridViewRow row in dgvBookList.Rows)
+                {
+
+                    DataRow dr = bookDT.NewRow();
+
+                    string str = row.Cells[1].Value.ToString();
+
+                    dr["BookName"] = row.Cells[1].Value.ToString();
+                    dr["BookCode"] = row.Cells[2].Value.ToString();
+                    dr["Author"] = row.Cells[3].Value.ToString();
+                    dr["Category"] = row.Cells[4].Value.ToString();
+                    dr["ISBN"] = row.Cells[5].Value.ToString();
+                    bookDT.Rows.Add(dr.ItemArray);
+                    dr = null;
+                }
+
+
+                frmReportViewer frmReport = new frmReportViewer();
+                frmReport.MdiParent = frmMain.ActiveForm;
+                frmReport.Show();
+                ReportViewer v = frmReport.Controls.Find("reportViewer1", true).FirstOrDefault() as ReportViewer;
+                ReportDataSource dataset = new ReportDataSource("DataSet1", bookDT);
+                v.LocalReport.ReportEmbeddedResource = "LibrarySystem.report.Report1.rdlc";
+                v.LocalReport.DataSources.Clear();
+                v.LocalReport.DataSources.Add(dataset);
+                v.LocalReport.Refresh();
+                dataset.Value = bookDT;
+                v.RefreshReport();
+                v.LocalReport.Refresh();
+
+            }catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
     }
 }
