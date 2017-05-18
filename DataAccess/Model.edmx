@@ -1,0 +1,413 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="BookPOSModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Book">
+          <Key>
+            <PropertyRef Name="BookID" />
+          </Key>
+          <Property Name="BookID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="BookName" Type="nvarchar" MaxLength="50" />
+          <Property Name="BookCode" Type="nvarchar" MaxLength="50" />
+          <Property Name="ISBN" Type="nvarchar" MaxLength="50" />
+          <Property Name="Author" Type="nvarchar" MaxLength="50" />
+          <Property Name="CategoryId" Type="bigint" Nullable="false" />
+        </EntityType>
+        <EntityType Name="BookRent">
+          <Key>
+            <PropertyRef Name="RentID" />
+          </Key>
+          <Property Name="RentID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MemberId" Type="bigint" Nullable="false" />
+          <Property Name="StartDate" Type="date" />
+          <Property Name="IssueDate" Type="date" />
+          <Property Name="NumberOfDay" Type="int" />
+        </EntityType>
+        <EntityType Name="Category">
+          <Key>
+            <PropertyRef Name="CategoryId" />
+          </Key>
+          <Property Name="CategoryId" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CategoryName" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="Member">
+          <Key>
+            <PropertyRef Name="MemberID" />
+          </Key>
+          <Property Name="MemberID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MemberCode" Type="nvarchar" MaxLength="50" />
+          <Property Name="MemberName" Type="nvarchar" MaxLength="50" />
+          <Property Name="Phone" Type="nvarchar" MaxLength="30" />
+          <Property Name="Address" Type="nvarchar" MaxLength="50" />
+          <Property Name="City" Type="nvarchar" MaxLength="50" />
+          <Property Name="Active" Type="int" />
+          <Property Name="email" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="RentBookDetail">
+          <Key>
+            <PropertyRef Name="RentDetailID" />
+          </Key>
+          <Property Name="RentDetailID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="RentID" Type="bigint" Nullable="false" />
+          <Property Name="BookID" Type="bigint" Nullable="false" />
+          <Property Name="Status" Type="int" />
+        </EntityType>
+        <Association Name="FK_Category_ID">
+          <End Role="Category" Type="Self.Category" Multiplicity="1" />
+          <End Role="Book" Type="Self.Book" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Category">
+              <PropertyRef Name="CategoryId" />
+            </Principal>
+            <Dependent Role="Book">
+              <PropertyRef Name="CategoryId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Rent_BookID">
+          <End Role="Book" Type="Self.Book" Multiplicity="1" />
+          <End Role="RentBookDetail" Type="Self.RentBookDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Book">
+              <PropertyRef Name="BookID" />
+            </Principal>
+            <Dependent Role="RentBookDetail">
+              <PropertyRef Name="BookID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Rent_MasterID">
+          <End Role="BookRent" Type="Self.BookRent" Multiplicity="1" />
+          <End Role="RentBookDetail" Type="Self.RentBookDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="BookRent">
+              <PropertyRef Name="RentID" />
+            </Principal>
+            <Dependent Role="RentBookDetail">
+              <PropertyRef Name="RentID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Rent_MemberID">
+          <End Role="Member" Type="Self.Member" Multiplicity="1" />
+          <End Role="BookRent" Type="Self.BookRent" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Member">
+              <PropertyRef Name="MemberID" />
+            </Principal>
+            <Dependent Role="BookRent">
+              <PropertyRef Name="MemberId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Function Name="SearchBook" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="BookName" Type="varchar" Mode="In" />
+          <Parameter Name="Author" Type="varchar" Mode="In" />
+          <Parameter Name="Category" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SearchRentBookHistory" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="MemberID" Type="bigint" Mode="In" />
+          <Parameter Name="BookName" Type="nvarchar" Mode="In" />
+          <Parameter Name="Category" Type="bigint" Mode="In" />
+          <Parameter Name="StartDate" Type="nvarchar" Mode="In" />
+          <Parameter Name="EndDate" Type="nvarchar" Mode="In" />
+        </Function>
+        <EntityContainer Name="BookPOSModelStoreContainer">
+          <EntitySet Name="Book" EntityType="Self.Book" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="BookRent" EntityType="Self.BookRent" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Category" EntityType="Self.Category" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Member" EntityType="Self.Member" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="RentBookDetail" EntityType="Self.RentBookDetail" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_Category_ID" Association="Self.FK_Category_ID">
+            <End Role="Category" EntitySet="Category" />
+            <End Role="Book" EntitySet="Book" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Rent_BookID" Association="Self.FK_Rent_BookID">
+            <End Role="Book" EntitySet="Book" />
+            <End Role="RentBookDetail" EntitySet="RentBookDetail" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Rent_MasterID" Association="Self.FK_Rent_MasterID">
+            <End Role="BookRent" EntitySet="BookRent" />
+            <End Role="RentBookDetail" EntitySet="RentBookDetail" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Rent_MemberID" Association="Self.FK_Rent_MemberID">
+            <End Role="Member" EntitySet="Member" />
+            <End Role="BookRent" EntitySet="BookRent" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="BookPOSModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Book">
+          <Key>
+            <PropertyRef Name="BookID" />
+          </Key>
+          <Property Name="BookID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="BookName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="BookCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ISBN" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Author" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="CategoryId" Type="Int64" Nullable="false" />
+          <NavigationProperty Name="Category" Relationship="Self.FK_Category_ID" FromRole="Book" ToRole="Category" />
+          <NavigationProperty Name="RentBookDetails" Relationship="Self.FK_Rent_BookID" FromRole="Book" ToRole="RentBookDetail" />
+        </EntityType>
+        <EntityType Name="BookRent">
+          <Key>
+            <PropertyRef Name="RentID" />
+          </Key>
+          <Property Name="RentID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MemberId" Type="Int64" Nullable="false" />
+          <Property Name="StartDate" Type="DateTime" Precision="0" />
+          <Property Name="IssueDate" Type="DateTime" Precision="0" />
+          <Property Name="NumberOfDay" Type="Int32" />
+          <NavigationProperty Name="RentBookDetails" Relationship="Self.FK_Rent_MasterID" FromRole="BookRent" ToRole="RentBookDetail" />
+          <NavigationProperty Name="Member" Relationship="Self.FK_Rent_MemberID" FromRole="BookRent" ToRole="Member" />
+        </EntityType>
+        <EntityType Name="Category">
+          <Key>
+            <PropertyRef Name="CategoryId" />
+          </Key>
+          <Property Name="CategoryId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CategoryName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Books" Relationship="Self.FK_Category_ID" FromRole="Category" ToRole="Book" />
+        </EntityType>
+        <EntityType Name="Member">
+          <Key>
+            <PropertyRef Name="MemberID" />
+          </Key>
+          <Property Name="MemberID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MemberCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="MemberName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Phone" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="Address" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="City" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Active" Type="Int32" />
+          <Property Name="email" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="BookRents" Relationship="Self.FK_Rent_MemberID" FromRole="Member" ToRole="BookRent" />
+        </EntityType>
+        <EntityType Name="RentBookDetail">
+          <Key>
+            <PropertyRef Name="RentDetailID" />
+          </Key>
+          <Property Name="RentDetailID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="RentID" Type="Int64" Nullable="false" />
+          <Property Name="BookID" Type="Int64" Nullable="false" />
+          <Property Name="Status" Type="Int32" />
+          <NavigationProperty Name="Book" Relationship="Self.FK_Rent_BookID" FromRole="RentBookDetail" ToRole="Book" />
+          <NavigationProperty Name="BookRent" Relationship="Self.FK_Rent_MasterID" FromRole="RentBookDetail" ToRole="BookRent" />
+        </EntityType>
+        <Association Name="FK_Category_ID">
+          <End Role="Category" Type="Self.Category" Multiplicity="1" />
+          <End Role="Book" Type="Self.Book" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Category">
+              <PropertyRef Name="CategoryId" />
+            </Principal>
+            <Dependent Role="Book">
+              <PropertyRef Name="CategoryId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Rent_BookID">
+          <End Role="Book" Type="Self.Book" Multiplicity="1" />
+          <End Role="RentBookDetail" Type="Self.RentBookDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Book">
+              <PropertyRef Name="BookID" />
+            </Principal>
+            <Dependent Role="RentBookDetail">
+              <PropertyRef Name="BookID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Rent_MasterID">
+          <End Role="BookRent" Type="Self.BookRent" Multiplicity="1" />
+          <End Role="RentBookDetail" Type="Self.RentBookDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="BookRent">
+              <PropertyRef Name="RentID" />
+            </Principal>
+            <Dependent Role="RentBookDetail">
+              <PropertyRef Name="RentID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Rent_MemberID">
+          <End Role="Member" Type="Self.Member" Multiplicity="1" />
+          <End Role="BookRent" Type="Self.BookRent" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Member">
+              <PropertyRef Name="MemberID" />
+            </Principal>
+            <Dependent Role="BookRent">
+              <PropertyRef Name="MemberId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="BookPOSEntities3" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Books" EntityType="Self.Book" />
+          <EntitySet Name="BookRents" EntityType="Self.BookRent" />
+          <EntitySet Name="Categories" EntityType="Self.Category" />
+          <EntitySet Name="Members" EntityType="Self.Member" />
+          <EntitySet Name="RentBookDetails" EntityType="Self.RentBookDetail" />
+          <AssociationSet Name="FK_Category_ID" Association="Self.FK_Category_ID">
+            <End Role="Category" EntitySet="Categories" />
+            <End Role="Book" EntitySet="Books" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Rent_BookID" Association="Self.FK_Rent_BookID">
+            <End Role="Book" EntitySet="Books" />
+            <End Role="RentBookDetail" EntitySet="RentBookDetails" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Rent_MasterID" Association="Self.FK_Rent_MasterID">
+            <End Role="BookRent" EntitySet="BookRents" />
+            <End Role="RentBookDetail" EntitySet="RentBookDetails" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Rent_MemberID" Association="Self.FK_Rent_MemberID">
+            <End Role="Member" EntitySet="Members" />
+            <End Role="BookRent" EntitySet="BookRents" />
+          </AssociationSet>
+          <FunctionImport Name="SearchBook" ReturnType="Collection(BookPOSModel.SearchBook_Result)">
+            <Parameter Name="BookName" Mode="In" Type="String" />
+            <Parameter Name="Author" Mode="In" Type="String" />
+            <Parameter Name="Category" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SearchRentBookHistory" ReturnType="Collection(BookPOSModel.SearchRentBookHistory_Result)">
+            <Parameter Name="MemberID" Mode="In" Type="Int64" />
+            <Parameter Name="BookName" Mode="In" Type="String" />
+            <Parameter Name="Category" Mode="In" Type="Int64" />
+            <Parameter Name="StartDate" Mode="In" Type="String" />
+            <Parameter Name="EndDate" Mode="In" Type="String" />
+          </FunctionImport>
+        </EntityContainer>
+        <ComplexType Name="SearchBook_Result">
+          <Property Type="Int64" Name="BookID" Nullable="false" />
+          <Property Type="String" Name="BOOKNAME" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="BOOKCODE" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="AUTHOR" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="CATEGORY" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="ISBN" Nullable="true" MaxLength="50" />
+        </ComplexType>
+        <ComplexType Name="SearchRentBookHistory_Result">
+          <Property Type="Int64" Name="RentDetailID" Nullable="false" />
+          <Property Type="Int64" Name="BookID" Nullable="false" />
+          <Property Type="String" Name="BookCode" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="BookName" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="Author" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="CategoryName" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="ISBN" Nullable="true" MaxLength="50" />
+        </ComplexType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="BookPOSModelStoreContainer" CdmEntityContainer="BookPOSEntities3">
+          <EntitySetMapping Name="Books">
+            <EntityTypeMapping TypeName="BookPOSModel.Book">
+              <MappingFragment StoreEntitySet="Book">
+                <ScalarProperty Name="BookID" ColumnName="BookID" />
+                <ScalarProperty Name="BookName" ColumnName="BookName" />
+                <ScalarProperty Name="BookCode" ColumnName="BookCode" />
+                <ScalarProperty Name="ISBN" ColumnName="ISBN" />
+                <ScalarProperty Name="Author" ColumnName="Author" />
+                <ScalarProperty Name="CategoryId" ColumnName="CategoryId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="BookRents">
+            <EntityTypeMapping TypeName="BookPOSModel.BookRent">
+              <MappingFragment StoreEntitySet="BookRent">
+                <ScalarProperty Name="RentID" ColumnName="RentID" />
+                <ScalarProperty Name="MemberId" ColumnName="MemberId" />
+                <ScalarProperty Name="StartDate" ColumnName="StartDate" />
+                <ScalarProperty Name="IssueDate" ColumnName="IssueDate" />
+                <ScalarProperty Name="NumberOfDay" ColumnName="NumberOfDay" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Categories">
+            <EntityTypeMapping TypeName="BookPOSModel.Category">
+              <MappingFragment StoreEntitySet="Category">
+                <ScalarProperty Name="CategoryId" ColumnName="CategoryId" />
+                <ScalarProperty Name="CategoryName" ColumnName="CategoryName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Members">
+            <EntityTypeMapping TypeName="BookPOSModel.Member">
+              <MappingFragment StoreEntitySet="Member">
+                <ScalarProperty Name="MemberID" ColumnName="MemberID" />
+                <ScalarProperty Name="MemberCode" ColumnName="MemberCode" />
+                <ScalarProperty Name="MemberName" ColumnName="MemberName" />
+                <ScalarProperty Name="Phone" ColumnName="Phone" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="City" ColumnName="City" />
+                <ScalarProperty Name="Active" ColumnName="Active" />
+                <ScalarProperty Name="email" ColumnName="email" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="RentBookDetails">
+            <EntityTypeMapping TypeName="BookPOSModel.RentBookDetail">
+              <MappingFragment StoreEntitySet="RentBookDetail">
+                <ScalarProperty Name="RentDetailID" ColumnName="RentDetailID" />
+                <ScalarProperty Name="RentID" ColumnName="RentID" />
+                <ScalarProperty Name="BookID" ColumnName="BookID" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="SearchBook" FunctionName="BookPOSModel.Store.SearchBook">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="BookPOSModel.SearchBook_Result">
+                <ScalarProperty Name="BookID" ColumnName="BookID" />
+                <ScalarProperty Name="BOOKNAME" ColumnName="BOOKNAME" />
+                <ScalarProperty Name="BOOKCODE" ColumnName="BOOKCODE" />
+                <ScalarProperty Name="AUTHOR" ColumnName="AUTHOR" />
+                <ScalarProperty Name="CATEGORY" ColumnName="CATEGORY" />
+                <ScalarProperty Name="ISBN" ColumnName="ISBN" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SearchRentBookHistory" FunctionName="BookPOSModel.Store.SearchRentBookHistory">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="BookPOSModel.SearchRentBookHistory_Result">
+                <ScalarProperty Name="RentDetailID" ColumnName="RentDetailID" />
+                <ScalarProperty Name="BookID" ColumnName="BookID" />
+                <ScalarProperty Name="BookCode" ColumnName="BookCode" />
+                <ScalarProperty Name="BookName" ColumnName="BookName" />
+                <ScalarProperty Name="Author" ColumnName="Author" />
+                <ScalarProperty Name="CategoryName" ColumnName="CategoryName" />
+                <ScalarProperty Name="ISBN" ColumnName="ISBN" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
