@@ -36,13 +36,13 @@ namespace DataAccess
                         //INSERT DETAIL TABLE
                         for (int i = 0; i < dt.Rows.Count; i++)
                         {
-                            var RentDetail = db.Set<RentBookDetail>().Create();
+                            var RentDetail = db.Set<RentBookDetail>().Create(); //can not assign null value
                             RentDetail.RentID = RentID;
                             RentDetail.BookID = Convert.ToInt64(dt.Rows[i]["BookID"].ToString());
                             RentDetail.Status = 1;
                             db.RentBookDetails.Add(RentDetail);
                             l_return = db.SaveChanges();
-                            RentDetail = null;
+                            RentDetail = null; //can not use null vlue
 
                         }
                     }

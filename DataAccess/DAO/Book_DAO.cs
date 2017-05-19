@@ -26,13 +26,16 @@ namespace DataAccess
                 resultList = db.Database
                 .SqlQuery<SearchBook_Result>("SearchBook @BookName,@Author,@Category", bookName,author, categoryId)
                 .ToList();
-                db.Dispose();
+                
            }catch(Exception ex)
            {
                throw ex;
            }
-
-
+           finally
+           {
+               db.Dispose();
+           }
+           
            return resultList;
        }
 

@@ -64,7 +64,7 @@ namespace LibrarySystem
                     string city = txtCity.Text.Trim();
                     string ph = txtPhone.Text.Trim();
                     string add = txtAddress.Text.Trim();
-                    string[] row = { "false", code, name, email, city, ph, add };
+                    string[] row = { "false", name, code, email, city, ph, add };
                     dgvMemberList.Rows.Add(row);
 
                     Clear();

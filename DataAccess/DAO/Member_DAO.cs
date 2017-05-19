@@ -21,7 +21,7 @@ namespace DataAccess
                 var memQuery = from mem in db.Members
                                where mem.MemberCode == memberCode
                                select mem;
-                if (memQuery.SingleOrDefault() != null)
+                if (memQuery.SingleOrDefault() != null) //must be use first or default (can error when return multiple value)
                 {
                     memberObj = memQuery.Single();
                 }

@@ -32,7 +32,7 @@ namespace LibrarySystem
             string code = txtMemberCode.Text.Trim(); //For Member COde
             try
             {
-                if (code != "" && code != null)
+                if (String.IsNullOrEmpty(code))
                 {
                     if (!code.StartsWith("C"))
                     {
@@ -45,7 +45,7 @@ namespace LibrarySystem
 
                     if (Memberobj != null)
                     {
-                        txtMemberName.Text = Memberobj.MemberName.ToString();
+                        txtMemberName.Text = Memberobj.MemberName;
                     }
                     else
                     {
